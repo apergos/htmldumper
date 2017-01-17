@@ -4,6 +4,7 @@
 require('events').EventEmitter.prototype._maxListeners = 100;
 
 var P = require('bluebird');
+url = require('url');
 
 var makeDump = require('../lib/htmldump');
 
@@ -35,23 +36,21 @@ var argParser = require('yargs')
         default : true
     })
     //.default('apiURL', 'http://en.wikipedia.org/w/api.php')
-    //.default('prefix', 'en.wikipedia.org')
+    //.default('prefix', 'https://en.wikipedia.org/api/rest_v1')
     //.default('ns', '0')
-    .default('host', 'http://rest.wikimedia.org');
+    .default('host', '');
 
 var argv = argParser.argv;
 if (argv.h) {
     argParser.showHelp();
     process.exit(1);
 }
-if (!argv.dataBase && !argv.saveDir) {
-    console.log('at least one of saveDir or dataBase must be specified');
-    argParser.showHelp();
-    process.exit(1);
-}
 // Strip a trailing slash
 argv.host = argv.host.replace(/\/$/, '');
-
+argv.prefix = argv.prefix.replace(/\/$/, '');
+if (host == '') {
+    host = url.parse(prefix).hostname;
+}
 argv.ns = Number(argv.ns);
 
 return makeDump(argv)
