@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 "use strict";
 
+require('events').EventEmitter.prototype._maxListeners = 100;
+
 var P = require('bluebird');
 
 var makeDump = require('../lib/htmldump');
@@ -42,7 +44,11 @@ if (argv.h) {
     argParser.showHelp();
     process.exit(1);
 }
-
+if (!argv.dataBase && !argv.saveDir) {
+    console.log('at least one of saveDir or dataBase must be specified');
+    argParser.showHelp();
+    process.exit(1);
+}
 // Strip a trailing slash
 argv.host = argv.host.replace(/\/$/, '');
 
